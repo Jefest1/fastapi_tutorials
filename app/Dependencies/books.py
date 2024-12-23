@@ -38,3 +38,11 @@ async def update_book(book_id: int, db: Session, book_request: BookRequest):
         setattr(book, key, value)
     db.commit()
     db.refresh(book)
+
+
+async def delete_book_db(book_id: int, db: Session):
+    book = await get_book_by_id_db(book_id, db)
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    db.delete(book)
+    db.commit()

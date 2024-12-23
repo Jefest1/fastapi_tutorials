@@ -1,7 +1,8 @@
 from fastapi import FastAPI, responses, Path, Query, HTTPException, Depends
 from Dependencies.books import (get_books,
                                 create_book, get_book_by_id_db,
-                                get_book_by_author_db, update_book)
+                                get_book_by_author_db, update_book,
+                                delete_book_db)
 from schemas.books import BookRequest
 from core.config import settings
 from starlette import status
@@ -49,3 +50,8 @@ async def add_book(book_request: BookRequest, db: Session = Depends(get_db)):
 @app.put('/books/edit/edit_book', status_code=status.HTTP_204_NO_CONTENT)
 async def edit_book(book_id: int, book: BookRequest, db: Session = Depends(get_db),):
     await update_book(book_id, db, book)
+
+
+@app.delete('/books/{book_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_book(book_id: int, db: Session = Depends(get_db)):
+    await delete_book_db(book_id, db)
