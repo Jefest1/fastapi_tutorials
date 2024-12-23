@@ -1,7 +1,7 @@
 from fastapi import FastAPI, responses, Path, Query, HTTPException, Depends
 from Dependencies.books import (get_books,
                                 create_book, get_book_by_id_db,
-                                get_book_by_author_db)
+                                get_book_by_author_db, update_book)
 from schemas.books import BookRequest
 from core.config import settings
 from starlette import status
@@ -45,24 +45,7 @@ async def add_book(book_request: BookRequest, db: Session = Depends(get_db)):
     # get create book function
     await create_book(db, book_request)
 
-    # @app.get('/books/', status_code=status.HTTP_200_OK)
-    # async def get_book_by_rating(book_rating: int = Query(gt=0, lt=6)):
-    #     books_by_rating = []
-    #     for book in BOOKS:
-    #         if book.rating == book_rating:
-    #             books_by_rating.append(book)
-    #             return books_by_rating
-    #     raise HTTPException(status_code=404, detail=f"No book with rating {
-    #                         book_rating} found")
 
-    # @app.put('/add_book', status_code=status.HTTP_204_NO_CONTENT)
-    # async def add_book(updated_book: BookRequest):
-    #     book_exist = False
-    #     book = Books(**updated_book.model_dump())
-    #     for i in range(len(BOOKS)):
-    #         if BOOKS[i].id == book.id:
-    #             BOOKS[i] = book
-    #             book_exist = True
-    #     if not book_exist:
-    #         raise HTTPException(
-    #             status_code=404, detail=f"No book with id {book.id} found")
+@app.put('/books/edit/edit_book', status_code=status.HTTP_204_NO_CONTENT)
+async def edit_book(book_id: int, book: BookRequest, db: Session = Depends(get_db),):
+    await update_book(book_id, db, book)
